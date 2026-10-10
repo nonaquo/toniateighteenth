@@ -5,10 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Toni at Eighteenth</title>
     <style>
+        /* ==========================================================
+           RESPONSIVE SCALING SYSTEM
+           Every pixel value from your desktop design is now written as
+           calc(N * var(--u)). --u is "1 design pixel" and it grows/shrinks
+           with the screen width, so the layout looks exactly the same
+           at every size.
+
+           --dw / --dh = the desktop window size you designed on.
+           ========================================================== */
+        :root {
+            --dw: 1728;   /* design width  = your desktop window width  */
+            --dh: 1000;   /* design height = your desktop window height */
+            --u: calc(100vw / var(--dw));   /* 1 design pixel */
+            --hu: var(--u);                 /* hero-only unit */
+        }
+
+        /* On phones/tablets the hero text/logo get a bigger unit so they stay readable */
+        @media (max-width: 900px) {
+            :root {
+                --hu: calc(100vw / 700);
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
@@ -17,11 +44,16 @@
             overflow-x: hidden;
         }
 
+        img {
+            max-width: none; /* sizes are controlled below */
+        }
+
         /* First Section (Hero) */
         .hero-section {
             position: relative;
             width: 100%;
             height: 100vh;
+            height: 100svh;
             background-image: url('background.png');
             background-size: cover;
             background-position: center;
@@ -31,10 +63,10 @@
         /* Header Logo Styling */
         .hero-header {
             position: absolute;
-            top: 30px;      
+            top: calc(30 * var(--hu));
             left: 50%;
             transform: translateX(-50%);
-            width: 150px;   
+            width: calc(150 * var(--hu));
             height: auto;
             z-index: 10;
         }
@@ -46,7 +78,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 100%;
-            max-width: 600px;
+            max-width: calc(600 * var(--hu));
             height: 100%;
             pointer-events: none;
         }
@@ -57,7 +89,7 @@
                 transform: translateX(-50%) scale(0.6);
             }
             70% {
-                transform: translateX(-50%) scale(1.05); 
+                transform: translateX(-50%) scale(1.05);
             }
             100% {
                 opacity: 1;
@@ -67,41 +99,40 @@
 
         .img-you {
             position: absolute;
-            top: 46%;       
-            left: 50%;      
-            width: 80px;    
+            top: 46%;
+            left: 50%;
+            width: calc(80 * var(--hu));
             height: auto;
-            opacity: 0; 
-            animation: fancyPopIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s forwards; 
+            opacity: 0;
+            animation: fancyPopIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s forwards;
         }
 
         .img-are {
             position: absolute;
-            top: 60%;       
-            left: 50%;      
-            width: 70px;    
+            top: 60%;
+            left: 50%;
+            width: calc(70 * var(--hu));
             height: auto;
-            opacity: 0; 
-            animation: fancyPopIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.0s forwards; 
+            opacity: 0;
+            animation: fancyPopIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.0s forwards;
         }
 
         .img-invited {
             position: absolute;
-            top: 70%;       
-            left: 50%;      
-            width: 500px;   
+            top: 70%;
+            left: 50%;
+            width: calc(500 * var(--hu));
             height: auto;
-            opacity: 0; 
-            animation: fancyPopIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.5s forwards; 
+            opacity: 0;
+            animation: fancyPopIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.5s forwards;
         }
 
         /* Transition Divider Graphic (header.png) */
         .section-divider {
             position: absolute;
-            top: 905px;
+            top: calc(100% + 5 * var(--hu));
             left: 50%;
-            transform: translateX(-50%);
-            width: 600px; 
+            width: calc(600 * var(--hu));
             height: auto;
             z-index: 10;
             opacity: 0;
@@ -118,11 +149,11 @@
         .details-section {
             position: relative;
             width: 100%;
-            min-height: 100vh;
+            height: calc(var(--dh) * var(--u));
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 80px 20px;
+            padding: calc(80 * var(--u)) calc(20 * var(--u));
             overflow: hidden;
         }
 
@@ -138,11 +169,11 @@
             background-size: 80% auto;
             background-position: center;
             background-repeat: no-repeat;
-            z-index: 2; /* Sits above photos, below invi card */
-            
+            z-index: 2; 
+
             opacity: 0;
             transform: scale(0.94);
-            transition: opacity 1.6s cubic-bezier(0.165, 0.84, 0.44, 1), 
+            transition: opacity 1.6s cubic-bezier(0.165, 0.84, 0.44, 1),
                         transform 1.6s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
@@ -154,25 +185,25 @@
         .details-container {
             position: relative;
             width: 100%;
-            max-width: 900px; 
+            max-width: calc(900 * var(--u));
             text-align: center;
-            z-index: 3; /* Top layer for the main invitation card */
+            z-index: 3; 
         }
 
         /* ==========================================
            LAP-DISSOLVE SLIDESHOW CONTAINER
            ========================================== */
         .debutant-photo-wrapper {
-      position: absolute;
-            z-index: 1; 
-            
-            top: 380px;       /* Adjust to move the frame UP or DOWN */
-            right: 230px;     /* Adjust to move the frame LEFT or RIGHT */
-            
-            width: 650px;     /* <-- ADJUST FRAME WIDTH HERE */
-            height: 500px;    /* <-- ADJUST FRAME HEIGHT HERE */
-            
-            overflow: hidden; 
+            position: absolute;
+            z-index: 1;
+
+            top: calc(380 * var(--u));     
+            right: calc(230 * var(--u));   
+
+            width: calc(650 * var(--u));   
+            height: calc(500 * var(--u));  
+
+            overflow: hidden;
             opacity: 0;
             transform: scale(0.9);
             transition: opacity 1.4s ease 0.5s, transform 1.4s ease 0.5s;
@@ -183,43 +214,42 @@
             transform: scale(1);
         }
 
-        /* Individual Slides stacked on top of each other for cross-fading */
+        /* Individual Slides */
         .debutant-photo-wrapper img {
-         position: absolute;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            
-            object-fit: cover;        
-            transform: scale(0.9);    /* <-- Change this: 0.8 makes the photo 80% size, 1.2 makes it 120% */
+
+            object-fit: cover;
+            transform: scale(0.9);
             transform-origin: center;
 
-            object-position: 50% 20%;
-            
+            object-position: 50% 20%; 
+
             opacity: 0;
             transition: opacity 1.5s ease-in-out;
         }
 
-        /* Active slide becomes fully visible */
         .debutant-photo-wrapper img.active {
             opacity: 1;
         }
 
-        /* Magical Scroll-Reveal Animation for invi.png */
+        /* Scroll-Reveal Animation for invi.png */
         .img-invi {
-            width: 100%;       
-            max-width: 610px;  
+            width: 100%;
+            max-width: calc(610 * var(--u));
             height: auto;
             display: block;
             margin: 0 auto;
-            position: relative; 
-            top: 130px;           
-            left: -300px;          
-            
+            position: relative;
+            top: calc(130 * var(--u));
+            left: calc(-300 * var(--u));
+
             opacity: 0;
-            transform: translateY(50px) scale(0.95);
-            transition: opacity 1.4s cubic-bezier(0.165, 0.84, 0.44, 1) 0.3s, 
+            transform: translateY(calc(50 * var(--u))) scale(0.95);
+            transition: opacity 1.4s cubic-bezier(0.165, 0.84, 0.44, 1) 0.3s,
                         transform 1.4s cubic-bezier(0.165, 0.84, 0.44, 1) 0.3s,
                         filter 0.4s ease;
             cursor: pointer;
@@ -236,28 +266,147 @@
             filter: drop-shadow(0px 20px 30px rgba(212, 175, 55, 0.35));
         }
 
-        /* Unique Slow Lightbox Modal Transition */
+        /* ==========================================
+           COUNTDOWN SECTION STYLING
+           ========================================== */
+        .countdown-section {
+       position: relative;
+            width: 100%;
+            height: calc(var(--dh) * var(--u));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: calc(80 * var(--u)) calc(20 * var(--u));
+            overflow: hidden;
+            background-color: #faf9f5;
+            
+            /* --- ADD THIS LINE TO PULL THE WHOLE SECTION UP --- */
+            margin-top: calc(-300 * var(--u)); /* Adjust this negative number to move it up as much as you want */
+        
+        }
+
+        /* bordercount.png background wrapper */
+        .countdown-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('bordercount.png');
+            background-size: 80% auto;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 2;
+
+            opacity: 0;
+            transform: scale(0.94);
+            transition: opacity 1.6s cubic-bezier(0.165, 0.84, 0.44, 1),
+                        transform 1.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .countdown-section.visible::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .countdown-container {
+            position: relative;
+            width: 100%;
+            max-width: calc(900 * var(--u));
+            height: 100%;
+            text-align: center;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* until.png header text */
+        .img-until {
+            width: 100%;
+            max-width: calc(450 * var(--u));
+            height: auto;
+            display: block;
+            margin-bottom: calc(40 * var(--u));
+            opacity: 0;
+            transform: translateY(calc(30 * var(--u)));
+            transition: opacity 1.2s ease 0.3s, transform 1.2s ease 0.3s;
+        }
+
+        .countdown-section.visible .img-until {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Countdown Timer Grid Wrapper */
+        .countdown-timer-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: calc(190 * var(--u));
+            opacity: 0;
+            transform: translateY(calc(40 * var(--u))) scale(0.95);
+            transition: opacity 1.4s cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s,
+                        transform 1.4s cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
+        }
+
+        .countdown-section.visible .countdown-timer-box {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Individual Time Unit Box (Days, Hours, Minutes, Seconds) */
+        .time-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Number Display (Pairs of digit images) */
+        .digits-wrapper {
+            display: flex;
+            gap: calc(9 * var(--u));
+            margin-bottom: calc(15 * var(--u));
+        }
+
+        /* Using 1.png, 2.png, etc. */
+        .digit-img {
+            width: calc(45 * var(--u));
+            height: auto;
+            display: block;
+        }
+
+        /* Label Image (days.png, hours.png, minutes.png, seconds.png) */
+        .label-img {
+            width: calc(90 * var(--u));
+            height: auto;
+            display: block;
+        }
+
+        /* Slow Lightbox Modal Transition */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0); 
+            background-color: rgba(0, 0, 0, 0);
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            pointer-events: none; 
+            pointer-events: none;
             transition: background-color 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), backdrop-filter 0.8s ease;
             backdrop-filter: blur(0px);
         }
 
         .modal-overlay.active {
-            background-color: rgba(0, 0, 0, 0.85); 
+            background-color: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(6px);
-            pointer-events: auto; 
+            pointer-events: auto;
         }
 
         .modal-content {
@@ -265,23 +414,24 @@
             max-width: 85%;
             max-height: 85vh;
             opacity: 0;
-            transform: scale(0.85) translateY(20px); 
-            transition: opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), 
+            transform: scale(0.85) translateY(20px);
+            transition: opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1),
                         transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
         .modal-overlay.active .modal-content {
             opacity: 1;
-            transform: scale(1) translateY(0); 
+            transform: scale(1) translateY(0);
         }
 
         .modal-content img {
             width: 100%;
             height: auto;
             max-height: 85vh;
+            object-fit: contain;
             display: block;
-            border-radius: 0px; 
-            box-shadow: none;   
+            border-radius: 0px;
+            box-shadow: none;
             background: transparent;
         }
 
@@ -323,7 +473,7 @@
 
     <!-- SECTION 2: Invitation Details -->
     <section class="details-section" id="detailsSection">
-        
+
         <!-- Debutante Photo Slideshow (Multiple Photos with Lap-Dissolve) -->
         <div class="debutant-photo-wrapper">
             <img src="photo1.jpg" alt="Debutant Photo 1" class="active">
@@ -331,11 +481,57 @@
             <img src="photo3.jpg" alt="Debutant Photo 3">
             <img src="photo4.jpg" alt="Debutant Photo 4">
             <img src="photo5.jpg" alt="Debutant Photo 5">
-            <!-- Add more photos here easily: <img src="photo3.png" alt="Debutant Photo 3"> -->
         </div>
 
         <div class="details-container">
             <img src="invi.png" alt="Invitation Details" class="img-invi" id="inviCard" onclick="openModal()">
+        </div>
+    </section>
+
+    <!-- SECTION 3: Countdown Section -->
+    <section class="countdown-section" id="countdownSection">
+        <div class="countdown-container">
+            <!-- Until Header Graphic -->
+            <img src="until.png" alt="Until Toni's Eighteenth" class="img-until">
+
+            <!-- Countdown Timer Blocks -->
+            <div class="countdown-timer-box">
+                <!-- Days -->
+                <div class="time-block">
+                    <div class="digits-wrapper" id="daysDigits">
+                        <img src="0.png" class="digit-img" alt="0">
+                        <img src="0.png" class="digit-img" alt="0">
+                    </div>
+                    <img src="days.png" alt="Days" class="label-img">
+                </div>
+
+                <!-- Hours -->
+                <div class="time-block">
+                    <div class="digits-wrapper" id="hoursDigits">
+                        <img src="0.png" class="digit-img" alt="0">
+                        <img src="0.png" class="digit-img" alt="0">
+                    </div>
+                    <img src="hours.png" alt="Hours" class="label-img">
+                </div>
+
+                <!-- Minutes -->
+                <div class="time-block">
+                    <div class="digits-wrapper" id="minutesDigits">
+                        <img src="0.png" class="digit-img" alt="0">
+                        <img src="0.png" class="digit-img" alt="0">
+                    </div>
+                    <img src="minutes.png" alt="Minutes" class="label-img">
+                </div>
+
+                <!-- Seconds -->
+                <div class="time-block">
+                    <div class="digits-wrapper" id="secondsDigits">
+                        <img src="0.png" class="digit-img" alt="0">
+                        <img src="0.png" class="digit-img" alt="0">
+                    </div>
+                    <img src="seconds.png" alt="Seconds" class="label-img">
+                </div>
+            </div>
         </div>
     </section>
 
@@ -347,7 +543,7 @@
         </div>
     </div>
 
-    <!-- JavaScript for Scroll-Reveal & Lap-Dissolve Slideshow -->
+    <!-- JavaScript for Scroll-Reveal, Slideshow, & Countdown Timer -->
     <script>
         const observerOptions = {
             root: null,
@@ -365,6 +561,7 @@
         observer.observe(document.getElementById('dividerGraphic'));
         observer.observe(document.getElementById('detailsSection'));
         observer.observe(document.getElementById('inviCard'));
+        observer.observe(document.getElementById('countdownSection'));
 
         // Lightbox Modal Logic
         function openModal() {
@@ -389,8 +586,56 @@
             slides[currentSlide].classList.add('active');
         }
 
-        // Changes photo every 3.5 seconds with a smooth cross-fade
         setInterval(nextSlide, 3500);
+
+        // ==========================================
+        // COUNTDOWN TIMER LOGIC
+        // ==========================================
+        // Set your target event date and time here (e.g., October 25, 2026 16:00:00 based on invitation text)
+        const targetDate = new Date("October 25, 2026 16:00:00").getTime();
+
+        function updateDigits(containerId, value) {
+            const container = document.getElementById(containerId);
+            const strVal = String(value).padStart(2, '0'); // Ensures 2 digits like "05"
+            const images = container.querySelectorAll('.digit-img');
+            
+            images[0].src = strVal.charAt(0) + '.png';
+            images[1].src = strVal.charAt(1) + '.png';
+        }
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                updateDigits('daysDigits', 0);
+                updateDigits('hoursDigits', 0);
+                updateDigits('minutesDigits', 0);
+                updateDigits('secondsDigits', 0);
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60 * 64)) / (1000 * 60)); // Standard minute calculation
+            // Real time calculation for minutes and seconds:
+            const realMinutes = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Corrected time variables mapping
+            const finalHours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const finalMinutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const finalSeconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            updateDigits('daysDigits', days);
+            updateDigits('hoursDigits', finalHours);
+            updateDigits('minutesDigits', finalMinutes);
+            updateDigits('secondsDigits', finalSeconds);
+        }
+
+        // Run immediately and update every second
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
     </script>
 
 </body>
