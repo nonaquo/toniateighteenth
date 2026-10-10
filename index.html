@@ -414,7 +414,7 @@
             flex-direction: column;
             align-items: center;
             padding: calc(150 * var(--u)) 0 calc(150 * var(--u));
-            margin-top: calc(0 * var(--u));      /* negative = pull section up */
+            margin-top: calc(-250 * var(--u));   /* more negative = closer to the countdown */
             background: transparent;
         }
 
@@ -614,6 +614,261 @@
             color: #d4af37;
         }
 
+
+        /* ==========================================================
+           SECTION 5: RSVP + PLUS ONE INQUIRIES
+           ----------------------------------------------------------
+           HOW TO MOVE THINGS (same idea as the traditions section):
+
+           - Whole section up/down ... .rsvp-section -> margin-top
+           - Section height .......... .rsvp-stage   -> height
+           - Each piece, in its own .rsvp-xxx block below:
+                --x = left/right (% across the page, 50% = center)
+                --y = up/down    (% down the section, 50% = middle)
+                --w = size       (% of the page width)
+           ========================================================== */
+        .rsvp-section {
+            position: relative;
+            width: 100%;
+            padding: 0 0 calc(170 * var(--u));
+            margin-top: calc(-70 * var(--u));    /* negative = pull section up */
+            background: transparent;
+        }
+
+        .rsvp-stage {
+            position: relative;
+            width: 100%;
+            height: calc(600 * var(--u));
+        }
+
+        .rsvp-item {
+            position: absolute;
+            left: var(--x);
+            top: var(--y);
+            width: var(--w);
+            display: block;
+            opacity: 0;
+            transition: opacity 1.4s ease var(--d, 0s),
+                        transform 1.4s cubic-bezier(0.165, 0.84, 0.44, 1) var(--d, 0s);
+        }
+
+        .rsvp-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* left side slides in from the left, right side from the right */
+        .rsvp-left  { transform: translate(calc(-50% - 40 * var(--u)), -50%); }
+        .rsvp-right { transform: translate(calc(-50% + 40 * var(--u)), -50%); }
+
+        /* the divider vine grows from the middle */
+        .rsvp-divider { transform: translate(-50%, -50%) scaleY(0.6); }
+
+        .rsvp-section.visible .rsvp-left,
+        .rsvp-section.visible .rsvp-right {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+
+        .rsvp-section.visible .rsvp-divider {
+            opacity: 1;
+            transform: translate(-50%, -50%) scaleY(1);
+        }
+
+        /* the clickable confirm link */
+        .rsvp-confirm {
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .rsvp-confirm img {
+            transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1),
+                        filter 0.5s ease;
+        }
+
+        .rsvp-confirm:hover img {
+            transform: scale(1.04);
+            filter: drop-shadow(0 calc(10 * var(--u)) calc(16 * var(--u)) rgba(232, 150, 170, 0.45));
+        }
+
+        .rsvp-confirm:focus-visible {
+            outline: 2px dashed #8a9a6a;
+            outline-offset: 8px;
+        }
+
+        /* ---------- ADJUST EACH PIECE HERE ---------- */
+        .rsvp-info    { --x: 24.3%; --y: 26.5%; --w: 28.5%; --d: 0.2s; }   /* kindlyrsvp.png   */
+        .rsvp-confirm { --x: 24.9%; --y: 61%;   --w: 32%;   --d: 0.5s; }   /* confirmlink.png  */
+        .rsvp-divider { --x: 49.6%; --y: 48%;   --w: 3.4%;  --d: 0.3s; }   /* borderrsvp.png   */
+        .rsvp-plusone { --x: 72.9%; --y: 35%;   --w: 43.5%; --d: 0.4s; }   /* plusone.png      */
+        .rsvp-number  { --x: 72.6%; --y: 67%;   --w: 23.5%; --d: 0.7s; }   /* number.png       */
+
+
+        /* ==========================================================
+           SECTION 6: MAP
+           ----------------------------------------------------------
+           HOW TO MOVE THINGS:
+
+           - Whole section up/down ... .map-section -> margin-top
+           - Border size ............. .map-stage   -> width
+           - Small map position/size . the .map-slot block below:
+                --x = left edge  (% across the border)
+                --y = top edge   (% down the border)
+                --w = width      (% of the border width)
+                --h = height     (% of the border height)
+           - Dim color when open ..... .map-backdrop -> background
+           ========================================================== */
+        .map-section {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 0 0 calc(200 * var(--u));
+            margin-top: calc(-110 * var(--u));   /* negative = pull section up */
+            background: transparent;
+        }
+
+        /* Stage = mapborder.png. Its height follows the image. */
+        .map-stage {
+            position: relative;
+            width: calc(1493 * var(--u));
+        }
+
+        .map-border {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0;
+            transform: scale(0.96);
+            transition: opacity 1.6s cubic-bezier(0.165, 0.84, 0.44, 1) 0.2s,
+                        transform 1.6s cubic-bezier(0.165, 0.84, 0.44, 1) 0.2s;
+        }
+
+        .map-section.visible .map-border {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* The empty spot inside the border where the small map sits.
+           (opacity only, no transform, so the map can pop out of it) */
+        .map-slot {
+            position: absolute;
+            left: var(--x);
+            top: var(--y);
+            width: var(--w);
+            height: var(--h);
+            opacity: 0;
+            transition: opacity 1.4s ease 0.9s;
+        }
+
+        .map-section.visible .map-slot {
+            opacity: 1;
+        }
+
+        /* ---------- ADJUST THE SMALL MAP HERE ---------- */
+        .map-slot { --x: 24%; --y: 28%; --w: 52%; --h: 40%; }
+
+        .map-box {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: calc(10 * var(--u));
+            overflow: hidden;
+            background: #e9e5da;
+            box-shadow: 0 calc(10 * var(--u)) calc(30 * var(--u)) rgba(0, 0, 0, 0.18);
+            transition: box-shadow 0.5s ease;
+        }
+
+        .map-box:not(.expanded):not(.is-fixed):hover {
+            box-shadow: 0 calc(14 * var(--u)) calc(36 * var(--u)) rgba(212, 175, 55, 0.45);
+        }
+
+        .map-box.is-fixed {
+            position: fixed;
+            z-index: 10001;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .map-box iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        /* invisible button on top of the small map: catches the click
+           (clicks inside an iframe can't be detected otherwise) */
+        .map-shield {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .map-box.expanded .map-shield,
+        .map-box.is-fixed .map-shield {
+            display: none;
+        }
+
+        /* dim background while the map is open */
+        .map-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.8);   /* 0 = clear, 1 = solid black */
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            opacity: 0;
+            visibility: hidden;
+            cursor: pointer;
+            transition: opacity 0.9s ease, visibility 0s linear 0.9s;
+        }
+
+        .map-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.9s ease, visibility 0s;
+        }
+
+        .map-close {
+            position: fixed;
+            top: 14px;
+            right: 26px;
+            z-index: 10002;
+            font-size: 42px;
+            font-weight: 200;
+            font-family: serif;
+            line-height: 1;
+            color: #fff;
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease, color 0.3s;
+        }
+
+        .map-close.ready {
+            opacity: 0.85;
+            pointer-events: auto;
+        }
+
+        .map-close:hover {
+            opacity: 1;
+            color: #d4af37;
+        }
+
         /* Slow Lightbox Modal Transition */
         .modal-overlay {
             position: fixed;
@@ -793,6 +1048,52 @@
         </div>
     </section>
 
+    <!-- SECTION 5: RSVP + Plus One Inquiries -->
+    <section class="rsvp-section" id="rsvpSection">
+        <div class="rsvp-stage">
+
+            <!-- LEFT: Kindly RSVP -->
+            <div class="rsvp-item rsvp-left rsvp-info">
+                <img src="kindlyrsvp.png" alt="Kindly RSVP - we kindly ask you to confirm your attendance by clicking the link below">
+            </div>
+
+            <!-- LEFT: Confirm attendance link (CHANGE THE href BELOW TO YOUR RSVP LINK) -->
+            <a class="rsvp-item rsvp-left rsvp-confirm" href="https://example.com" target="_blank" rel="noopener" aria-label="Confirm your attendance">
+                <img src="confirmlink.png" alt="Confirm your attendance">
+            </a>
+
+            <!-- MIDDLE: divider -->
+            <div class="rsvp-item rsvp-divider">
+                <img src="borderrsvp.png" alt="">
+            </div>
+
+            <!-- RIGHT: Plus one inquiries -->
+            <div class="rsvp-item rsvp-right rsvp-plusone">
+                <img src="plusone.png" alt="Plus one inquiries - if you wish to bring a plus one or have any questions regarding your invitation, please contact us through the details below">
+            </div>
+
+            <!-- RIGHT: Contact numbers -->
+            <div class="rsvp-item rsvp-right rsvp-number">
+                <img src="number.png" alt="Contact us: 09423267609 - Toni Emelo, 09423262035 - Lucia Emelo">
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 6: Map -->
+    <section class="map-section" id="mapSection">
+        <div class="map-stage">
+            <img src="mapborder.png" alt="Map border" class="map-border">
+
+            <div class="map-slot" id="mapSlot">
+                <div class="map-box" id="mapBox">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4796.906713103876!2d121.09506067595352!3d14.090544786337484!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd6f27e7213687%3A0xce88d1497c3d7a4a!2sPlantacion%20del%20Socorro!5e1!3m2!1sen!2sph!4v1791629733604!5m2!1sen!2sph" title="Map to Plantacion del Socorro" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    <button class="map-shield" id="mapShield" aria-label="Click to see the full extended map"></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Traditions details overlay (the icon "runs" up to the screen, details fade in) -->
     <div id="tradOverlay" class="trad-overlay">
         <div class="trad-backdrop"></div>
@@ -800,6 +1101,10 @@
         <img id="tradDetail" class="trad-detail" alt="Tradition details">
         <button id="tradClose" class="trad-close" aria-label="Close">&times;</button>
     </div>
+
+    <!-- Map expanded view: dim background + close button -->
+    <div id="mapBackdrop" class="map-backdrop"></div>
+    <button id="mapClose" class="map-close" aria-label="Close map">&times;</button>
 
     <!-- Fullscreen Lightbox Modal -->
     <div id="inviModal" class="modal-overlay" onclick="closeModal()">
@@ -829,6 +1134,8 @@
         observer.observe(document.getElementById('inviCard'));
         observer.observe(document.getElementById('countdownSection'));
         observer.observe(document.getElementById('tradSection'));
+        observer.observe(document.getElementById('rsvpSection'));
+        observer.observe(document.getElementById('mapSection'));
 
         // Lightbox Modal Logic
         function openModal() {
@@ -1068,6 +1375,116 @@
                     const f = computeFinal();
                     place(detail, f.cx, f.cy, f.wF);
                 }
+            });
+        })();
+
+        // ==========================================
+        // MAP: click the small map -> it grows to a big view,
+        // background dims. Click outside / x / Esc to shrink back.
+        // ==========================================
+        (function () {
+            // ---- SETTINGS you can tweak ----
+            const OPEN_MS = 900;     // grow speed (bigger = slower)
+            const CLOSE_MS = 750;    // shrink speed
+            const FILL_W = 0.92;     // big map width  (0-1 of the screen)
+            const FILL_H = 0.84;     // big map height (0-1 of the screen)
+            const EASE = 'cubic-bezier(0.65, 0, 0.2, 1)';
+
+            const slot = document.getElementById('mapSlot');
+            const box = document.getElementById('mapBox');
+            const shield = document.getElementById('mapShield');
+            const backdrop = document.getElementById('mapBackdrop');
+            const closeBtn = document.getElementById('mapClose');
+
+            let expanded = false;
+            let busy = false;
+
+            function targetRect() {
+                const vw = document.documentElement.clientWidth;
+                const vh = window.innerHeight;
+                const w = vw * FILL_W, h = vh * FILL_H;
+                return { left: (vw - w) / 2, top: (vh - h) / 2 + 10, width: w, height: h };
+            }
+
+            function setRect(r) {
+                box.style.left = r.left + 'px';
+                box.style.top = r.top + 'px';
+                box.style.width = r.width + 'px';
+                box.style.height = r.height + 'px';
+            }
+
+            function frame(r, radius) {
+                return {
+                    left: r.left + 'px', top: r.top + 'px',
+                    width: r.width + 'px', height: r.height + 'px',
+                    borderRadius: radius
+                };
+            }
+
+            async function openMap() {
+                if (busy || expanded) return;
+                busy = true;
+
+                const from = slot.getBoundingClientRect();
+                const to = targetRect();
+                const startRadius = getComputedStyle(box).borderRadius;
+
+                setRect(from);
+                box.classList.add('is-fixed');          // pops out of the border, same spot
+                document.body.style.overflow = 'hidden';
+                backdrop.classList.add('show');
+
+                const anim = box.animate(
+                    [frame(from, startRadius), frame(to, '14px')],
+                    { duration: OPEN_MS, easing: EASE, fill: 'forwards' }
+                );
+                try { await anim.finished; } catch (e) {}
+
+                setRect(to);
+                box.style.borderRadius = '14px';
+                anim.cancel();
+
+                box.classList.add('expanded');           // map is now usable
+                closeBtn.classList.add('ready');
+                expanded = true;
+                busy = false;
+            }
+
+            async function closeMap() {
+                if (busy || !expanded) return;
+                busy = true;
+
+                closeBtn.classList.remove('ready');
+                backdrop.classList.remove('show');
+                box.classList.remove('expanded');
+
+                const cur = box.getBoundingClientRect();
+                const to = slot.getBoundingClientRect();
+
+                const anim = box.animate(
+                    [frame(cur, '14px'), frame(to, '10px')],
+                    { duration: CLOSE_MS, easing: EASE, fill: 'forwards' }
+                );
+                try { await anim.finished; } catch (e) {}
+
+                box.classList.remove('is-fixed');
+                box.style.left = box.style.top = box.style.width = box.style.height = '';
+                box.style.borderRadius = '';
+                anim.cancel();
+
+                document.body.style.overflow = '';
+                expanded = false;
+                busy = false;
+            }
+
+            shield.addEventListener('click', openMap);
+            backdrop.addEventListener('click', closeMap);
+            closeBtn.addEventListener('click', closeMap);
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMap(); });
+
+            // keep the big map fitted if the window is resized
+            window.addEventListener('resize', () => {
+                if (expanded && !busy) setRect(targetRect());
             });
         })();
     </script>
