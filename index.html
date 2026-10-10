@@ -385,6 +385,235 @@
             display: block;
         }
 
+
+        /* ==========================================================
+           SECTION 4: THE 18TH TRADITIONS
+           ----------------------------------------------------------
+           HOW TO MOVE THINGS (all numbers are in "design pixels" and
+           scale with the screen, same as the rest of your page):
+
+           - Whole section up/down ........ .trad-section  -> margin-top
+           - Title size / gap ............. .trad-title
+           - Border size .................. .trad-stage    -> width
+           - Each bubble position & size .. the .trad-xxx blocks below
+                --x  = left/right  (% across the border, 50% = center)
+                --y  = up/down     (% down the border,   50% = middle)
+                --w  = bubble size (% of the border width)
+                --dur   = how slow it floats (bigger = slower)
+                --delay = start offset (keep it negative)
+                --amp   = how far it drifts (1 = normal, 2 = double)
+           ========================================================== */
+        html {
+            scrollbar-gutter: stable;
+        }
+
+        .trad-section {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: calc(150 * var(--u)) 0 calc(150 * var(--u));
+            margin-top: calc(0 * var(--u));      /* negative = pull section up */
+            background: transparent;
+        }
+
+        /* 18thtrad.png (intro title) */
+        .trad-title {
+            width: calc(600 * var(--u));
+            height: auto;
+            display: block;
+            margin-bottom: calc(60 * var(--u));
+            position: relative;
+            z-index: 3;
+            opacity: 0;
+            transform: translateY(calc(30 * var(--u)));
+            transition: opacity 1.2s ease 0.2s, transform 1.2s ease 0.2s;
+        }
+
+        .trad-section.visible .trad-title {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stage = the border. Its height follows the image automatically,
+           and every bubble is positioned in % of this box. */
+        .trad-stage {
+            position: relative;
+            width: calc(1550 * var(--u));
+        }
+
+        .trad-border {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0;
+            transform: scale(0.96);
+            transition: opacity 1.6s cubic-bezier(0.165, 0.84, 0.44, 1) 0.4s,
+                        transform 1.6s cubic-bezier(0.165, 0.84, 0.44, 1) 0.4s;
+        }
+
+        .trad-section.visible .trad-border {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* ---- Floating clickable bubbles ---- */
+        .trad-item {
+            position: absolute;
+            left: var(--x);
+            top: var(--y);
+            width: var(--w);
+            padding: 0;
+            border: 0;
+            background: none;
+            cursor: pointer;
+            z-index: 2;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.4);
+            transition: opacity 1s ease calc(0.6s + var(--i) * 0.2s),
+                        transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) calc(0.6s + var(--i) * 0.2s);
+        }
+
+        .trad-section.visible .trad-item {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .trad-item:focus-visible {
+            outline: 2px dashed #8a9a6a;
+            outline-offset: 8px;
+        }
+
+        /* the constant drifting motion */
+        .trad-float {
+            display: block;
+            animation: tradFloat var(--dur, 7s) ease-in-out var(--delay, 0s) infinite;
+        }
+
+        /* hold still while hovering (easier to click) or while open */
+        .trad-item:hover .trad-float,
+        .trad-item.is-open .trad-float {
+            animation-play-state: paused;
+        }
+
+        .trad-float img {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 calc(10 * var(--u)) calc(14 * var(--u)) rgba(110, 130, 90, 0.18));
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1),
+                        filter 0.6s ease;
+        }
+
+        .trad-item:hover .trad-float img {
+            transform: scale(1.08);
+            filter: drop-shadow(0 calc(16 * var(--u)) calc(24 * var(--u)) rgba(232, 150, 170, 0.45));
+        }
+
+        @keyframes tradFloat {
+            0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+            20%  { transform: translate3d(calc(10 * var(--u) * var(--amp, 1)), calc(-18 * var(--u) * var(--amp, 1)), 0) rotate(1.2deg) scale(1.02); }
+            45%  { transform: translate3d(calc(-6 * var(--u) * var(--amp, 1)), calc(-30 * var(--u) * var(--amp, 1)), 0) rotate(-1deg) scale(1.03); }
+            70%  { transform: translate3d(calc(-14 * var(--u) * var(--amp, 1)), calc(-10 * var(--u) * var(--amp, 1)), 0) rotate(1.5deg) scale(1.01); }
+            100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .trad-float { animation: none; }
+        }
+
+        /* ---------- ADJUST EACH BUBBLE HERE ---------- */
+        .trad-monetary { --x: 24.5%; --y: 36%; --w: 25%; --dur: 7s;   --delay: -1s; --amp: 1;   --i: 0; }
+        .trad-gifts    { --x: 51.5%; --y: 37%; --w: 24%; --dur: 8.5s; --delay: -4s; --amp: 1.1; --i: 1; }
+        .trad-candles  { --x: 80%;   --y: 40%; --w: 24%; --dur: 7.5s; --delay: -2s; --amp: 1;   --i: 2; }
+        .trad-shots    { --x: 35%;   --y: 69%; --w: 26%; --dur: 9s;   --delay: -6s; --amp: 1.2; --i: 3; }
+        .trad-dance    { --x: 62%;   --y: 74%; --w: 21%; --dur: 8s;   --delay: -3s; --amp: 1;   --i: 4; }
+
+        /* ---------- Click-to-open overlay ---------- */
+        .trad-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .trad-overlay.open {
+            visibility: visible;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .trad-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);   /* black backdrop: change 0.8 (0 = clear, 1 = solid black) */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .trad-overlay.show .trad-backdrop {
+            opacity: 1;
+        }
+
+        .trad-fly,
+        .trad-detail {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: auto;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            will-change: left, top, width, opacity, transform;
+        }
+
+        .trad-detail {
+            filter: drop-shadow(0 calc(20 * var(--u)) calc(40 * var(--u)) rgba(0, 0, 0, 0.12));
+        }
+
+        .trad-close {
+            position: fixed;
+            top: 20px;
+            right: 28px;
+            font-size: 42px;
+            font-weight: 200;
+            font-family: serif;
+            line-height: 1;
+            color: #fff;
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease, color 0.3s;
+        }
+
+        .trad-overlay.ready .trad-close {
+            opacity: 0.8;
+            pointer-events: auto;
+        }
+
+        .trad-close:hover {
+            opacity: 1;
+            color: #d4af37;
+        }
+
         /* Slow Lightbox Modal Transition */
         .modal-overlay {
             position: fixed;
@@ -535,6 +764,43 @@
         </div>
     </section>
 
+    <!-- SECTION 4: The 18th Traditions -->
+    <section class="trad-section" id="tradSection">
+        <img src="18thtrad.png" alt="The 18th Traditions" class="trad-title">
+
+        <div class="trad-stage">
+            <img src="bordertrad.png" alt="" class="trad-border">
+
+            <button class="trad-item trad-monetary" data-detail="monetarye.png" aria-label="Monetary tradition - tap for details">
+                <span class="trad-float"><img src="monetary.png" alt="Monetary"></span>
+            </button>
+
+            <button class="trad-item trad-gifts" data-detail="giftse.png" aria-label="Gifts tradition - tap for details">
+                <span class="trad-float"><img src="gifts.png" alt="Gifts"></span>
+            </button>
+
+            <button class="trad-item trad-candles" data-detail="candlese.png" aria-label="Candles tradition - tap for details">
+                <span class="trad-float"><img src="candles.png" alt="Candles"></span>
+            </button>
+
+            <button class="trad-item trad-shots" data-detail="shotse.png" aria-label="Shots tradition - tap for details">
+                <span class="trad-float"><img src="shots.png" alt="Shots"></span>
+            </button>
+
+            <button class="trad-item trad-dance" data-detail="dancese.png" aria-label="Dance tradition - tap for details">
+                <span class="trad-float"><img src="dance.png" alt="Dance"></span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Traditions details overlay (the icon "runs" up to the screen, details fade in) -->
+    <div id="tradOverlay" class="trad-overlay">
+        <div class="trad-backdrop"></div>
+        <img id="tradFly" class="trad-fly" alt="">
+        <img id="tradDetail" class="trad-detail" alt="Tradition details">
+        <button id="tradClose" class="trad-close" aria-label="Close">&times;</button>
+    </div>
+
     <!-- Fullscreen Lightbox Modal -->
     <div id="inviModal" class="modal-overlay" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
@@ -562,6 +828,7 @@
         observer.observe(document.getElementById('detailsSection'));
         observer.observe(document.getElementById('inviCard'));
         observer.observe(document.getElementById('countdownSection'));
+        observer.observe(document.getElementById('tradSection'));
 
         // Lightbox Modal Logic
         function openModal() {
@@ -636,6 +903,173 @@
         // Run immediately and update every second
         updateCountdown();
         setInterval(updateCountdown, 1000);
+
+        // ==========================================
+        // 18TH TRADITIONS: click a bubble -> it zooms to the
+        // screen while its details image fades in
+        // ==========================================
+        (function () {
+            // ---- SETTINGS you can tweak ----
+            const OPEN_MS = 1700;                              // zoom-in speed (bigger = slower)
+            const CLOSE_MS = 1200;                             // zoom-out speed
+            const SCREEN_FILL = 0.92;                          // how much of the screen the details fill (0-1)
+            const OPEN_EASE = 'cubic-bezier(0.7, 0, 0.2, 1)';  // starts slow, rushes, then settles
+            const CLOSE_EASE = 'cubic-bezier(0.6, 0, 0.25, 1)';
+
+            const overlay = document.getElementById('tradOverlay');
+            const fly = document.getElementById('tradFly');
+            const detail = document.getElementById('tradDetail');
+            const closeBtn = document.getElementById('tradClose');
+            const items = document.querySelectorAll('.trad-item');
+
+            let current = null;
+            let busy = false;
+
+            // preload details so they open instantly
+            items.forEach(it => { const im = new Image(); im.src = it.dataset.detail; });
+
+            function place(el, cx, cy, w) {
+                el.style.left = cx + 'px';
+                el.style.top = cy + 'px';
+                el.style.width = w + 'px';
+            }
+
+            function computeFinal() {
+                const vw = document.documentElement.clientWidth;
+                const vh = window.innerHeight;
+                const nw = detail.naturalWidth, nh = detail.naturalHeight;
+                const s = Math.min((vw * SCREEN_FILL) / nw, (vh * SCREEN_FILL) / nh);
+                const wF = nw * s, hF = nh * s;
+                const iw = fly.naturalWidth || 1, ih = fly.naturalHeight || 1;
+                const s2 = Math.min(wF / iw, hF / ih);
+                return { cx: vw / 2, cy: vh / 2, wF: wF, wFly: iw * s2 };
+            }
+
+            function iconBox(item) {
+                const r = item.querySelector('img').getBoundingClientRect();
+                return { cx: r.left + r.width / 2, cy: r.top + r.height / 2, w: r.width };
+            }
+
+            const T = (deg) => 'translate(-50%, -50%) rotate(' + deg + 'deg)';
+
+            async function openTrad(item) {
+                if (busy || current) return;
+                busy = true;
+
+                const icon = item.querySelector('img');
+                fly.src = icon.currentSrc || icon.src;
+                detail.src = item.dataset.detail;
+                try { await Promise.all([detail.decode(), fly.decode()]); } catch (e) {}
+                if (!detail.naturalWidth) {
+                    console.warn('Could not load', item.dataset.detail);
+                    busy = false;
+                    return;
+                }
+
+                item.classList.add('is-open');          // freeze the float so the start/end spots match
+                const a = iconBox(item);
+                const f = computeFinal();
+
+                document.body.style.overflow = 'hidden';
+                place(fly, a.cx, a.cy, a.w);
+                fly.style.opacity = 1;
+                fly.style.transform = T(0);
+                place(detail, a.cx, a.cy, a.w);
+                detail.style.opacity = 0;
+                detail.style.transform = T(0);
+                item.style.visibility = 'hidden';       // the clone takes over
+
+                overlay.classList.add('open');
+                requestAnimationFrame(() => overlay.classList.add('show'));
+
+                const opts = { duration: OPEN_MS, easing: OPEN_EASE, fill: 'forwards' };
+
+                // the bubble "runs" at the screen with a little tilt, then fades away
+                const a1 = fly.animate([
+                    { left: a.cx + 'px', top: a.cy + 'px', width: a.w + 'px', opacity: 1, transform: T(0), offset: 0 },
+                    { opacity: 1, transform: T(-6), offset: 0.35 },
+                    { opacity: 1, offset: 0.5 },
+                    { left: f.cx + 'px', top: f.cy + 'px', width: f.wFly + 'px', opacity: 0, transform: T(0), offset: 1 }
+                ], opts);
+
+                // the details fade in slowly while it grows
+                const a2 = detail.animate([
+                    { left: a.cx + 'px', top: a.cy + 'px', width: a.w + 'px', opacity: 0, transform: T(0), offset: 0 },
+                    { opacity: 0, transform: T(-3), offset: 0.35 },
+                    { opacity: 1, offset: 0.9 },
+                    { left: f.cx + 'px', top: f.cy + 'px', width: f.wF + 'px', opacity: 1, transform: T(0), offset: 1 }
+                ], opts);
+
+                try { await Promise.all([a1.finished, a2.finished]); } catch (e) {}
+
+                place(detail, f.cx, f.cy, f.wF);
+                detail.style.opacity = 1;
+                detail.style.transform = T(0);
+                fly.style.opacity = 0;
+                a1.cancel();
+                a2.cancel();
+
+                overlay.classList.add('ready');
+                current = item;
+                busy = false;
+            }
+
+            async function closeTrad() {
+                if (busy || !current) return;
+                busy = true;
+                const item = current;
+
+                overlay.classList.remove('ready');
+                overlay.classList.remove('show');
+
+                const a = iconBox(item);
+                const f = computeFinal();
+                const opts = { duration: CLOSE_MS, easing: CLOSE_EASE, fill: 'forwards' };
+
+                place(fly, f.cx, f.cy, f.wFly);
+                fly.style.opacity = 0;
+
+                const a1 = fly.animate([
+                    { left: f.cx + 'px', top: f.cy + 'px', width: f.wFly + 'px', opacity: 0, transform: T(0), offset: 0 },
+                    { opacity: 0, offset: 0.3 },
+                    { opacity: 1, transform: T(5), offset: 0.65 },
+                    { left: a.cx + 'px', top: a.cy + 'px', width: a.w + 'px', opacity: 1, transform: T(0), offset: 1 }
+                ], opts);
+
+                const a2 = detail.animate([
+                    { left: f.cx + 'px', top: f.cy + 'px', width: f.wF + 'px', opacity: 1, transform: T(0), offset: 0 },
+                    { opacity: 1, offset: 0.25 },
+                    { opacity: 0, offset: 0.7 },
+                    { left: a.cx + 'px', top: a.cy + 'px', width: a.w + 'px', opacity: 0, transform: T(0), offset: 1 }
+                ], opts);
+
+                try { await Promise.all([a1.finished, a2.finished]); } catch (e) {}
+
+                item.style.visibility = '';
+                item.classList.remove('is-open');
+                overlay.classList.remove('open');
+                a1.cancel();
+                a2.cancel();
+                fly.style.opacity = 0;
+                detail.style.opacity = 0;
+                document.body.style.overflow = '';
+                current = null;
+                busy = false;
+            }
+
+            items.forEach(it => it.addEventListener('click', () => openTrad(it)));
+            overlay.addEventListener('click', closeTrad);
+            closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeTrad(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeTrad(); });
+
+            // keep the opened details fitted if the window is resized
+            window.addEventListener('resize', () => {
+                if (current && !busy) {
+                    const f = computeFinal();
+                    place(detail, f.cx, f.cy, f.wF);
+                }
+            });
+        })();
     </script>
 
 </body>
