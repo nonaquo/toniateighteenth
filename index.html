@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toni at Eighteenth</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #faf9f5;
+            font-family: serif;
+            overflow-x: hidden;
+        }
+
+        /* First Section (Hero) */
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Header Logo Styling (No animation) */
+        .hero-header {
+            position: absolute;
+            top: 30px;      
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;   
+            height: auto;
+            z-index: 10;
+        }
+
+        /* Container to center and hold the text images over the fountain */
+        .fountain-text-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            max-width: 600px;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Keyframe animation for the fancy scale-out/fade-in pop effect */
+        @keyframes fancyPopIn {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0.6);
+            }
+            70% {
+                transform: translateX(-50%) scale(1.05); 
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+
+        /* Individual Image Positioning, Sizing, & Animations in Order */
+        .img-you {
+            position: absolute;
+            top: 46%;       
+            left: 50%;      
+            width: 80px;    
+            height: auto;
+            opacity: 0; 
+            animation: fancyPopIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s forwards; 
+        }
+
+        .img-are {
+            position: absolute;
+            top: 60%;       
+            left: 50%;      
+            width: 70px;    
+            height: auto;
+            opacity: 0; 
+            animation: fancyPopIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.0s forwards; 
+        }
+
+        .img-invited {
+            position: absolute;
+            top: 70%;       
+            left: 50%;      
+            width: 500px;   
+            height: auto;
+            opacity: 0; 
+            animation: fancyPopIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.5s forwards; 
+        }
+
+        /* Second Section (Scrollable Invitation Details) */
+        .details-section {
+            width: 100%;
+            min-height: 100vh;
+            background-color: #faf9f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 20px;
+        }
+
+        .details-container {
+            width: 100%;
+            max-width: 800px; /* Adjust max-width to make the invitation card bigger/smaller */
+            text-align: center;
+        }
+
+        .img-invi {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: Hero / Landing -->
+    <section class="hero-section">
+        <img src="tonilogo.png" alt="Toni at Eighteenth Logo" class="hero-header">
+
+        <div class="fountain-text-container">
+            <img src="you.png" alt="you" class="img-you">
+            <img src="are.png" alt="are" class="img-are">
+            <img src="invited.png" alt="invited" class="img-invited">
+        </div>
+    </section>
+
+    <!-- SECTION 2: Invitation Details (invi.png) -->
+    <section class="details-section">
+        <div class="details-container">
+            <img src="invi.png" alt="Invitation Details" class="img-invi">
+        </div>
+    </section>
+
+</body>
+</html>
