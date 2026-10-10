@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>toni at eighteenth</title>
     <link rel="preload" as="image" href="pleasewait.png">
-    <link rel="icon" href="favicon.ico" sizes="any">
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=2" sizes="any">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?v=2">
     <style>
         /* ==========================================================
            RESPONSIVE SCALING SYSTEM
@@ -1115,6 +1115,18 @@
             animation-play-state: paused;
         }
 
+
+        /* ==========================================================
+           IMAGE PROTECTION: no dragging, no long-press "save image"
+           (the right-click menu is blocked in the script at the bottom)
+           ========================================================== */
+        img {
+            -webkit-user-drag: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
         /* Slow Lightbox Modal Transition */
         .modal-overlay {
             position: fixed;
@@ -1344,7 +1356,7 @@
 
             <div class="map-slot" id="mapSlot">
                 <div class="map-box" id="mapBox">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4796.906713103876!2d121.09506067595352!3d14.090544786337484!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd6f27e7213687%3A0xce88d1497c3d7a4a!2sPlantacion%20del%20Socorro!5e1!3m2!1sen!2sph!4v1791629733604!5m2!1sen!2sph" title="Map to Plantacion del Socorro" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4796.906713103876!2d121.09506067595352!3d14.090544786337484!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd6f27e7213687%3A0xce88d1497c3d7a4a!2sPlantacion%20del%20Socorro!5e1!3m2!1sen!2sph!4v1791629733604!5m2!1sen!2sph" title="Map to Plantacion del Socorro" style="border:0;" allowfullscreen="" referrerpolicy="strict-origin-when-cross-origin"></iframe>
                     <button class="map-shield" id="mapShield" aria-label="Click to see the full extended map"></button>
                 </div>
             </div>
@@ -1777,12 +1789,12 @@
         })();
     </script>
 
-    <!-- LOADER SCRIPT: waits for every image, then fades the loading screen -->
+    <!-- LOADER SCRIPT: waits until EVERYTHING is loaded AND decoded, then fades the loading screen -->
     <script>
         (function () {
             // ---- SETTINGS you can tweak ----
             const MIN_MS = 1200;     // show the loader at least this long (avoids a flash)
-            const MAX_MS = 20000;    // never keep guests waiting longer than this
+            const MAX_MS = 45000;    // safety: never keep guests waiting longer than this
 
             const loader = document.getElementById('pageLoader');
             const startTime = Date.now();
@@ -1797,18 +1809,41 @@
 
             if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-            function preload(src) {
+            // keep references so the browser doesn't throw the preloaded images away
+            window.__keepLoaded = [];
+
+            function decode(img) {
+                return img.decode ? img.decode().catch(function () {}) : Promise.resolve();
+            }
+
+            // 1) every <img> in the page: wait for download, then decode it (so it paints instantly)
+            function loadMarkupImage(img) {
+                return new Promise(function (resolve) {
+                    if (img.complete) resolve();
+                    else {
+                        img.addEventListener('load', resolve, { once: true });
+                        img.addEventListener('error', resolve, { once: true });
+                    }
+                }).then(function () { return decode(img); });
+            }
+
+            // 2) extra images that aren't in the HTML yet
+            function loadExtraImage(src) {
                 return new Promise(function (resolve) {
                     const im = new Image();
-                    im.onload = im.onerror = function () { resolve(); };
+                    window.__keepLoaded.push(im);
+                    im.onload = function () { decode(im).then(resolve); };
+                    im.onerror = resolve;
                     im.src = src;
                 });
             }
 
+            // 3) the whole page (includes the Google map frame) + fonts
             const pageLoaded = new Promise(function (resolve) {
                 if (document.readyState === 'complete') resolve();
                 else window.addEventListener('load', resolve, { once: true });
             });
+            const fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
 
             let finished = false;
             function finish() {
@@ -1816,16 +1851,36 @@
                 finished = true;
                 const wait = Math.max(0, MIN_MS - (Date.now() - startTime));
                 setTimeout(function () {
-                    window.scrollTo(0, 0);
-                    document.body.classList.remove('loading');   // unlock scroll + start hero animation
-                    loader.classList.add('hide');                // fade out
-                    setTimeout(function () { loader.remove(); }, 1400);
+                    // let the browser paint everything once before revealing
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            window.scrollTo(0, 0);
+                            document.body.classList.remove('loading');   // unlock scroll + start hero animation
+                            loader.classList.add('hide');                // fade out
+                            setTimeout(function () { loader.remove(); }, 1400);
+                        });
+                    });
                 }, wait);
             }
 
-            Promise.all([pageLoaded].concat(extraImages.map(preload))).then(finish);
+            Promise.all(
+                [pageLoaded, fontsReady]
+                    .concat(Array.prototype.slice.call(document.images).map(loadMarkupImage))
+                    .concat(extraImages.map(loadExtraImage))
+            ).then(finish);
+
             setTimeout(finish, MAX_MS);
         })();
+
+        // ==========================================
+        // IMAGE PROTECTION: no right-click menu / dragging on images
+        // ==========================================
+        document.addEventListener('contextmenu', function (e) {
+            if (e.target && e.target.tagName === 'IMG') e.preventDefault();
+        });
+        document.addEventListener('dragstart', function (e) {
+            if (e.target && e.target.tagName === 'IMG') e.preventDefault();
+        });
     </script>
 
 </body>
